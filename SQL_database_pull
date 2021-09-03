@@ -1,0 +1,18 @@
+<case when [PRD_LVL_3_DESC] in ("Domestic DDA","CUSTODY CASH CLEARING")) and (TRANSACTION CURRENCY]="USD") then
+case when [SOURCE_SYSTEM_ID] in ("IBS","SPD") then "DEL" else "INC" end
+else "INC" end as [ID] nest
+
+case when [PRD_LVL_3_DESC]="DOMESTIC DDA" then "USD" else [TRANSACTION_CURRENCY] end as [CCY] NEST
+
+case when [PRD_LVL_4_DESC]="CASH CLEARING INTEREST BEARING" or [PRD_LVL_3_DESC]="DOMESTIC DEPOSITS" then "IBDDA" else
+case when left([PRD_LVL_3_DESC],6) ="NON-US" then "TD"
+when [PRD_LVL_4_DESC]="CASH CLEARING NON-INTEREST BEARING" then "DOMESTIC DDA"
+else [PRD_LVL_3_DESC] end end as [Product] NEST
+
+case when [PRD_LVL_3_DESC]="INTERCOMPANY & OTHER DEPOSITS","REPURCHASE AGREEMENTS") then "Other" else
+case when [PRD_LVL_4_DESC] in ("CASH CLEARING NON-INTEREST BEARING") then "DDA" else
+case when [PRD_LVL_3_DESC] in ("DOMESTIC DDDA") then "DDA" else
+case when [INTEREST_CODE_DESC]="IBDDA PLUS" then "PLUS"
+when [RATE_CATEGORY_DESC] in ("TRANSACTION") then [RATE_CATEGORY_DESC]
+when ([RATE_CATEGORY_DESC] in ("CALL")) and ([TRANSACTION_CURRENCY] in ("USD","EUR","GBP","CHF","JPY","DKK","SEK")) then "TRANSACTION"
+else "EXCEPTION" end end end end as [Rate]>
